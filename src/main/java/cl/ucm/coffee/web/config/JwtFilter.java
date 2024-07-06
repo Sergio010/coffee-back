@@ -29,12 +29,18 @@ public class JwtFilter extends OncePerRequestFilter {
 //        this.userDetailsService = userDetailsService;
 //    }
 
+
+ //el metodo se ejecuta de forma automatica, cada vez que se llame a la API, lo primero
+    // en ejecutarse sera el filter.
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         // 1. Validar que sea un Header Authorization valido
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         System.out.println("=====>"+authHeader);
+
+        //si no hay token pasa el securityconfig.
         if (authHeader == null || authHeader.isEmpty() || !authHeader.startsWith("Bearer")) {
             filterChain.doFilter(request, response);
             return;

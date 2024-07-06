@@ -33,10 +33,32 @@ public class SecurityConfig {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests()
+
+                //cualquier cosa que venga de este endpoint se acepta:
+                //este endpoint servira para la autenticacion y la creacion de una cuenta.
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/coffee").hasAnyRole("ADMIN", "CUSTOMER")
-                .requestMatchers(HttpMethod.GET, "/api/coffee/**").hasAnyRole("ADMIN", "CUSTOMER")
-                .requestMatchers(HttpMethod.POST, "/api/coffee/**").hasRole("ADMIN")
+
+                //todos pueden ver los cafes dentro de la tienda
+                .requestMatchers(HttpMethod.GET, "/api/coffee/list").permitAll()
+                //cualquier usuario, independiente del rol, puede ver los cafes:
+                .requestMatchers(HttpMethod.GET, "/api/coffee/listCoffees").permitAll()
+
+                .requestMatchers(HttpMethod.GET, "/api/coffee/findByName").permitAll()
+
+                //permite la busqueda de un cafe por su nombre o todas las coincidencias
+                .requestMatchers(HttpMethod.GET, "/api/coffee/search").permitAll()
+
+                .requestMatchers(HttpMethod.POST, "/api/coffee/createCoffee").hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.PUT, "/api/coffee/updateCoffee/{id}").hasRole("ADMIN")
+
+
+                .requestMatchers(HttpMethod.DELETE, "/api/coffee/deleteCoffee/{id}").hasRole("ADMIN")
+
+                //.requestMatchers(HttpMethod.GET, "/api/coffee").hasAnyRole("ADMIN", "CLIENT")
+                //.requestMatchers(HttpMethod.GET, "/api/coffee/**").hasAnyRole("ADMIN", "CLIENT")
+                // cuando se desea hacer post, ya sea agregar, editar o eliminar un cafe, solo el rol de admin podra hacerlo:
+                //.requestMatchers(HttpMethod.POST, "/api/coffee/**").hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

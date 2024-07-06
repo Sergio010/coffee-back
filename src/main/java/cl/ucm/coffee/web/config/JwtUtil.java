@@ -13,6 +13,9 @@ public class JwtUtil {
     private static String SECRET_KEY = "Ucm-c0ff33";
     private static Algorithm ALGORITHM = Algorithm.HMAC256(SECRET_KEY);
 
+
+    //crea el token, una vez el usuario ingresa exitosamente.
+    //crea distintos valores dentro del token, como el username, fecha de creacion, de expiracion, etc.
     public String create(String username) {
         return JWT.create()
                 .withSubject(username)
@@ -22,6 +25,8 @@ public class JwtUtil {
                 .sign(ALGORITHM);
     }
 
+
+    //valida si el token recibido es valido
     public boolean isValid(String jwt) {
         try {
             JWT.require(ALGORITHM)
@@ -33,6 +38,7 @@ public class JwtUtil {
         }
     }
 
+    //obtiene el username del usuario que ingresa al sistema
     public String getUsername(String jwt) {
         return JWT.require(ALGORITHM)
                 .build()

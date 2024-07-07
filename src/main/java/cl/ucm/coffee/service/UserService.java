@@ -1,30 +1,47 @@
 package cl.ucm.coffee.service;
 
 import cl.ucm.coffee.persitence.entity.UserEntity;
+import cl.ucm.coffee.persitence.entity.UserRoleEntity;
 import cl.ucm.coffee.persitence.repository.UserRepository;
+import cl.ucm.coffee.persitence.repository.UserRoleRepository;
 import cl.ucm.coffee.service.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private UserRoleRepository userRoleRepository;
 
-    public UserEntity createUser(UserDto userDto) {
+    public UserEntity createUser(UserDto createUserDto) {
         UserEntity newUser = new UserEntity();
-        newUser.setUsername(userDto.getUsername());
-        newUser.setPassword(userDto.getPassword());
-        newUser.setEmail(userDto.getEmail());
-        newUser.setLocked(userDto.getLocked());
-        newUser.setDisabled(userDto.getDisabled());
+        newUser.setUsername(createUserDto.getUsername());
+        newUser.setPassword(createUserDto.getPassword());
+        newUser.setEmail(createUserDto.getEmail());
+        newUser.setLocked(createUserDto.getLocked());
+        newUser.setDisabled(createUserDto.getDisabled());
 
-        // Guardar el nuevo usuario en la base de datos
-        return userRepository.save(newUser);
+        // Guarda el nuevo usuario en la base de datos
+        UserEntity createdUser = userRepository.save(newUser);
+
+        // Asigna roles al usuario
+        List<String> roles = Arrays.asList("CLIENT"); // Por ejemplo, asigna el rol "ROLE_USER"
+        for (String role : roles) {
+            UserRoleEntity userRole = new UserRoleEntity();
+            userRole.setUsername(createUserDto.getUsername());
+            userRole.setRole(role);
+            userRole.setGrantedDate(LocalDateTime.now());
+            userRoleRepository.save(userRole);
+        }
+
+        return createdUser;
     }
 }

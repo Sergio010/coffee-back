@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface CoffeeRepository extends JpaRepository<CoffeeEntity,Long> {
     List<CoffeeEntity> findByName(String name);
+
+    Optional<CoffeeEntity> findById(Long id);
     //CoffeeEntity findByIdCoffee(int idCoffee);
 
 }

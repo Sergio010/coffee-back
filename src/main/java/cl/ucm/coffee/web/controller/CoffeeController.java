@@ -3,6 +3,7 @@ package cl.ucm.coffee.web.controller;
 
 import cl.ucm.coffee.persitence.entity.CoffeeEntity;
 import cl.ucm.coffee.persitence.repository.CoffeeRepository;
+// cl.ucm.coffee.persitence.repository.TestimonialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,31 +25,61 @@ public class CoffeeController {
     private CoffeeRepository coffeeRepository;
     private CoffeeService coffeeService;
 
+
     @GetMapping("/list")
-    public ResponseEntity<Map<String, String>> coffes(){
+    public ResponseEntity<Map<String, String>> coffes() {
         Map map = new HashMap();
         map.put("coffee", "Coffees :Get)");
         return ResponseEntity.ok(map);
     }
+
     @PostMapping("/save")
-    public ResponseEntity<Map<String, String>> coffe(){
+    public ResponseEntity<Map<String, String>> coffe() {
         Map map = new HashMap();
         map.put("coffee", "Coffees Post:)");
         return ResponseEntity.ok(map);
     }
 
-    //metodo para obtener todos los cafes
-    @GetMapping("/listCoffees")
-    public List<CoffeeEntity> listCoffees() {
-        return coffeeRepository.findAll();
+
+
+    //uso de service para searchNyName
+    @Autowired
+    public CoffeeController(CoffeeService coffeeService) {
+        this.coffeeService = coffeeService;
     }
 
-    //metodo para buscar un cafe a traves de su nombre, se encuentran todas las coincidencias.
+    @GetMapping("/searchByName")
+    public ResponseEntity<List<CoffeeEntity>> searchByName(@RequestParam("name") String name) {
+        List<CoffeeEntity> coffees = coffeeService.searchCoffeesByName(name);
+        return ResponseEntity.ok().body(coffees);
+    }
+
+    @GetMapping("/findByName")
+    public ResponseEntity<List<CoffeeEntity>> findByName(@RequestParam("name") String name) {
+        List<CoffeeEntity> coffees = coffeeService.findByName(name);
+        if (coffees.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(coffees);
+    }
+
+    //uso de service para findAllCoffees()
+
+    @GetMapping("/listCoffees")
+    public ResponseEntity<List<CoffeeEntity>> listCoffees() {
+        List<CoffeeEntity> coffees = coffeeService.listCoffees();
+        return ResponseEntity.ok().body(coffees);
+    }
+
+
+    /*metodo para buscar un cafe a traves de su nombre, se encuentran todas las coincidencias.
     @GetMapping("/search")
     public ResponseEntity<List<CoffeeEntity>> searchCoffeesByName(@RequestParam("name") String name) {
         List<CoffeeEntity> coffees = coffeeRepository.findByName(name);
         return ResponseEntity.ok().body(coffees);
     }
+    */
+
 
     //metodo para crear un cafe
     @PostMapping("/createCoffee")
@@ -80,13 +111,13 @@ public class CoffeeController {
 
     @PutMapping("/updateCoffee/{id}")
     public String updateCoffee(@PathVariable Long id, @RequestBody CoffeeEntity coffeeEntity) {
-            CoffeeEntity updateCoffee = coffeeRepository.findById(id).get();
-            updateCoffee.setName(coffeeEntity.getName());
-            updateCoffee.setPrice(coffeeEntity.getPrice());
-            updateCoffee.setDescription(coffeeEntity.getDescription());
-            updateCoffee.setImage64(coffeeEntity.getImage64());
-            coffeeRepository.save(coffeeEntity);
-            return "Café Actualizado";
+        CoffeeEntity updateCoffee = coffeeRepository.findById(id).get();
+        updateCoffee.setName(coffeeEntity.getName());
+        updateCoffee.setPrice(coffeeEntity.getPrice());
+        updateCoffee.setDescription(coffeeEntity.getDescription());
+        updateCoffee.setImage64(coffeeEntity.getImage64());
+        coffeeRepository.save(coffeeEntity);
+        return "Café Actualizado";
 
     }
 
@@ -108,12 +139,13 @@ public class CoffeeController {
         }
     }
 
-    /* Endpoint para obtener un café por su ID
-    @GetMapping("/{id}")
-    public CoffeeEntity getCoffeeById(@PathVariable("id") Long id) {
-        Optional<CoffeeEntity> coffeeOptional;
-        coffeeOptional = coffeeRepository.findById((long) id);
-        return coffeeOptional.orElse(null); // Devuelve null si no se encuentra el café
+    // Método para obtener un café por su ID
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<CoffeeEntity> getCoffeeById(@PathVariable("id") Long id) {
+        Optional<CoffeeEntity> coffeeOptional = coffeeService.findById(id);
+        return coffeeOptional.map(ResponseEntity::ok) // Mapea el Optional a ResponseEntity.ok si está presente
+                .orElseGet(() -> ResponseEntity.notFound().build()); // Devuelve ResponseEntity.notFound() si está vacío
     }
-    */
+
+
 }

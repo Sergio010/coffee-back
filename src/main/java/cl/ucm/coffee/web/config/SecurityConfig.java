@@ -13,18 +13,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
+
     @Autowired
     private JwtFilter jwtFilter;
-
-    //@Autowired
-    //public SecurityConfig(JwtFilter jwtFilter) {
-    //    this.jwtFilter = jwtFilter;
-   // }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,37 +29,33 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests()
 
-                //cualquier cosa que venga de este endpoint se acepta:
-                //este endpoint servira para la autenticacion y la creacion de una cuenta.
+                // Autenticación y creación de cuenta
                 .requestMatchers("/api/auth/**").permitAll()
 
-                //todos pueden ver los cafes dentro de la tienda
-                .requestMatchers(HttpMethod.GET, "/api/coffee/list").permitAll()
-                //cualquier usuario, independiente del rol, puede ver los cafes:
+                // Permitir acceso a endpoints de café
+                .requestMatchers(HttpMethod.GET, "/api/coffee/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/coffee/findByName").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/coffee/searchByName").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/coffee/getById/{id}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/coffee/listCoffees").permitAll()
 
-                .requestMatchers(HttpMethod.GET, "/api/coffee/findByName").permitAll()
+                // Permitir acceso a endpoints de testimonios
+                .requestMatchers(HttpMethod.POST, "/api/testimonials/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/coffee/createTestimonial").permitAll()
 
-                //permite la busqueda de un cafe por su nombre o todas las coincidencias
-                .requestMatchers(HttpMethod.GET, "/api/coffee/search").permitAll()
+               // Permitir acceso a endpoints de cafes
+                .requestMatchers(HttpMethod.POST, "/api/coffee/createCoffee").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/coffee/updateCoffee/{id}").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/coffee/deleteCoffee/{id}").permitAll()
 
-                .requestMatchers(HttpMethod.POST, "/api/coffee/createCoffee").hasRole("ADMIN")
+                //Endpoints para usuarios
+                .requestMatchers(HttpMethod.POST, "/api/users/create").permitAll()
 
-                .requestMatchers(HttpMethod.PUT, "/api/coffee/updateCoffee/{id}").hasRole("ADMIN")
 
-
-                .requestMatchers(HttpMethod.DELETE, "/api/coffee/deleteCoffee/{id}").hasRole("ADMIN")
-
-                //.requestMatchers(HttpMethod.GET, "/api/coffee").hasAnyRole("ADMIN", "CLIENT")
-                //.requestMatchers(HttpMethod.GET, "/api/coffee/**").hasAnyRole("ADMIN", "CLIENT")
-                // cuando se desea hacer post, ya sea agregar, editar o eliminar un cafe, solo el rol de admin podra hacerlo:
-                //.requestMatchers(HttpMethod.POST, "/api/coffee/**").hasRole("ADMIN")
-                .anyRequest()
-                .authenticated()
+                // Cualquier otra solicitud debe estar autenticada
+                .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-
 
         return http.build();
     }

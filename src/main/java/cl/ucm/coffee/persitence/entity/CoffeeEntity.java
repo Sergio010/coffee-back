@@ -12,9 +12,8 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-
-
 public class CoffeeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_coffee", nullable = false)
@@ -30,12 +29,14 @@ public class CoffeeEntity {
     private int price;
 
     @Lob
-    private  byte[] image64;
+    private byte[] image64;
 
-    @OneToMany(mappedBy = "coffee", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "coffee", fetch = FetchType.LAZY)
     private List<TestimonialsEntity> testimonials;
 
-    public long getId(){
+    // Getters and Setters
+
+    public int getIdCoffee() {
         return idCoffee;
     }
 

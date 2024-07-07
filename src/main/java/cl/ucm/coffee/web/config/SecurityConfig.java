@@ -29,28 +29,33 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests()
 
-                // Autenticación y creación de cuenta
+                // Autenticación
                 .requestMatchers("/api/auth/**").permitAll()
 
-                // Permitir acceso a endpoints de café
+                // Permitir acceso a endpoints de café por parametros
                 .requestMatchers(HttpMethod.GET, "/api/coffee/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/coffee/findByName").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/coffee/searchByName").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/coffee/getById/{id}").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/coffee/listCoffees").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/coffee/getCoffeeByName/{name}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/coffee/getCoffeeById/{id}").permitAll()
 
                 // Permitir acceso a endpoints de testimonios
                 .requestMatchers(HttpMethod.POST, "/api/testimonials/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/coffee/createTestimonial").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/testimonials/create").permitAll()
 
-               // Permitir acceso a endpoints de cafes
+               // Permitir acceso a endpoints de cafes CRUD
+                .requestMatchers(HttpMethod.GET, "/api/coffee/listCoffeesWithTestimonials").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/coffee/createCoffee").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/coffee/updateCoffee/{id}").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/coffee/deleteCoffee/{id}").permitAll()
 
-                //Endpoints para usuarios
-                .requestMatchers(HttpMethod.POST, "/api/users/create").permitAll()
 
+                //Endpoints para usuarios CRUD
+                .requestMatchers(HttpMethod.GET, "/api/users/getAllUsers").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/users/getUserByName/{username}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/users/create").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/users/update/{username}").permitAll()
+
+
+                //falta restringir acceso.
 
                 // Cualquier otra solicitud debe estar autenticada
                 .anyRequest().authenticated()

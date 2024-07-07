@@ -5,12 +5,15 @@ import cl.ucm.coffee.persitence.entity.UserRoleEntity;
 import cl.ucm.coffee.persitence.repository.UserRepository;
 import cl.ucm.coffee.persitence.repository.UserRoleRepository;
 import cl.ucm.coffee.service.dto.UserDto;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -44,4 +47,31 @@ public class UserService {
 
         return createdUser;
     }
+
+    @Autowired
+    public List<UserDto> getAllUsers() {
+        List<UserEntity> users = (List<UserEntity>) userRepository.findAll();
+        return users.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private UserDto convertToDto(UserEntity userEntity) {
+        UserDto userDto = new UserDto();
+        userDto.setUsername(userEntity.getUsername());
+        userDto.setEmail(userEntity.getEmail());
+        userDto.setLocked(userEntity.getLocked());
+        userDto.setDisabled(userEntity.getDisabled());
+        // Puedes incluir más campos según sea necesario
+
+        return userDto;
+    }
+
+    public UserDto getUserByUsername(String username) {
+        UserEntity userEntity = userRepository.findById(username)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado."));
+        return convertToDto(userEntity);
+    }
+
+
 }

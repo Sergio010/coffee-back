@@ -5,9 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 
     public class UserDto {
         private String username;
@@ -15,6 +15,7 @@ import java.util.List;
         private String email;
         private Boolean locked;
         private Boolean disabled;
+
 
     }
 

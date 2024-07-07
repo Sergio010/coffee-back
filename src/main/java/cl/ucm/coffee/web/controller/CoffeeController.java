@@ -4,6 +4,9 @@ package cl.ucm.coffee.web.controller;
 import cl.ucm.coffee.persitence.entity.CoffeeEntity;
 import cl.ucm.coffee.persitence.repository.CoffeeRepository;
 // cl.ucm.coffee.persitence.repository.TestimonialsRepository;
+import cl.ucm.coffee.service.dto.CoffeeDto;
+import cl.ucm.coffee.service.dto.CoffeeWithTestimonialsDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +29,6 @@ public class CoffeeController {
     private CoffeeService coffeeService;
 
 
-    @GetMapping("/list")
-    public ResponseEntity<Map<String, String>> coffes() {
-        Map map = new HashMap();
-        map.put("coffee", "Coffees :Get)");
-        return ResponseEntity.ok(map);
-    }
-
     @PostMapping("/save")
     public ResponseEntity<Map<String, String>> coffe() {
         Map map = new HashMap();
@@ -41,13 +37,13 @@ public class CoffeeController {
     }
 
 
-
     //uso de service para searchNyName
     @Autowired
     public CoffeeController(CoffeeService coffeeService) {
         this.coffeeService = coffeeService;
     }
 
+    /*
     @GetMapping("/searchByName")
     public ResponseEntity<List<CoffeeEntity>> searchByName(@RequestParam("name") String name) {
         List<CoffeeEntity> coffees = coffeeService.searchCoffeesByName(name);
@@ -62,15 +58,15 @@ public class CoffeeController {
         }
         return ResponseEntity.ok(coffees);
     }
-
-    //uso de service para findAllCoffees()
+    */
+    /*uso de service para findAllCoffees()
 
     @GetMapping("/listCoffees")
     public ResponseEntity<List<CoffeeEntity>> listCoffees() {
         List<CoffeeEntity> coffees = coffeeService.listCoffees();
         return ResponseEntity.ok().body(coffees);
     }
-
+    */
 
     /*metodo para buscar un cafe a traves de su nombre, se encuentran todas las coincidencias.
     @GetMapping("/search")
@@ -139,12 +135,49 @@ public class CoffeeController {
         }
     }
 
-    // Método para obtener un café por su ID
+    /*Método para obtener un café por su ID
     @GetMapping("/getById/{id}")
     public ResponseEntity<CoffeeEntity> getCoffeeById(@PathVariable("id") Long id) {
         Optional<CoffeeEntity> coffeeOptional = coffeeService.findById(id);
         return coffeeOptional.map(ResponseEntity::ok) // Mapea el Optional a ResponseEntity.ok si está presente
                 .orElseGet(() -> ResponseEntity.notFound().build()); // Devuelve ResponseEntity.notFound() si está vacío
+    }
+
+    /*
+    @GetMapping("/list")
+    public ResponseEntity<List<CoffeeWithTestimonialsDto>> listCoffeesWithTestimonials() {
+        List<CoffeeWithTestimonialsDto> coffees = coffeeService.listCoffeesWithTestimonials();
+        return ResponseEntity.ok().body(coffees);
+    }
+    */
+
+    @GetMapping("/listCoffeesWithTestimonials")
+    public ResponseEntity<List<CoffeeWithTestimonialsDto>> listCoffeesWithTestimonials() {
+        List<CoffeeWithTestimonialsDto> coffees = coffeeService.listCoffeesWithTestimonials();
+        return ResponseEntity.ok().body(coffees);
+    }
+
+
+
+    @GetMapping("/getCoffeeByName/{name}")
+    public ResponseEntity<?> getCoffeeByName(@PathVariable String name) {
+        try {
+            CoffeeDto coffeeDto = coffeeService.getCoffeeByName(name);
+            return ResponseEntity.ok().body(coffeeDto);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    @GetMapping("/getCoffeeById/{id}")
+    public ResponseEntity<?> CoffeeById(@PathVariable Long id) {
+        try {
+            CoffeeWithTestimonialsDto coffeeDto = coffeeService.getCoffeeWithTestimonialsById(id);
+            return ResponseEntity.ok().body(coffeeDto);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 

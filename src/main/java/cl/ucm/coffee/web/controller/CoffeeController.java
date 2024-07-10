@@ -118,7 +118,17 @@ public class CoffeeController {
     }
 
 
-    //metodo para eliminar un cafe
+    @DeleteMapping("/deleteCoffee/{id}")
+    public ResponseEntity<?> deleteCoffee(@PathVariable("id") Long id) {
+        try {
+            coffeeService.deleteCoffee(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el café: " + e.getMessage());
+        }
+    }
+
+    /*metodo para eliminar un cafe
     @DeleteMapping("/deleteCoffee/{id}")
     public ResponseEntity<?> deleteCoffee(@PathVariable("id") Long id) {
         try {
@@ -134,6 +144,9 @@ public class CoffeeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el café: " + e.getMessage());
         }
     }
+
+
+     */
 
     /*Método para obtener un café por su ID
     @GetMapping("/getById/{id}")

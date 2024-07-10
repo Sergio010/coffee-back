@@ -31,7 +31,7 @@ public class CoffeeEntity {
     @Lob
     private byte[] image64;
 
-    @OneToMany(mappedBy = "coffee", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "coffee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestimonialsEntity> testimonials;
 
     // Getters and Setters

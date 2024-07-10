@@ -52,6 +52,7 @@ public class UserSecurityService implements UserDetailsService {
         return new String[] {};
     }
 
+
     private List<GrantedAuthority> grantedAuthorities(String[] roles) {
         List<GrantedAuthority> authorities = new ArrayList<>(roles.length);
 

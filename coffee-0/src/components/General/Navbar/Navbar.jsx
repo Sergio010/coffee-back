@@ -23,6 +23,8 @@ const Menu = [
     link: "/#",
   },
 ];
+
+
 const Navbar = () => {
   return (
     <>

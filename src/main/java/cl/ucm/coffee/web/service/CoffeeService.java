@@ -128,6 +128,16 @@ public class CoffeeService {
         }
     }
 
+    @Transactional
+    public void deleteCoffee(Long id) {
+        Optional<CoffeeEntity> optionalCoffee = coffeeRepository.findById(id);
+        if (optionalCoffee.isPresent()) {
+            CoffeeEntity coffee = optionalCoffee.get();
+            coffeeRepository.delete(coffee);
+        } else {
+            throw new EntityNotFoundException("Coffee not found with id: " + id);
+        }
+    }
 
 
 }

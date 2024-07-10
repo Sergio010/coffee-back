@@ -1,5 +1,5 @@
 {
-  "name": "10_project_biryani-shop",
+  "name": "coffee-0",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "npm run dev" 
   },
   "dependencies": {
     "aos": "^2.3.4",
@@ -31,5 +32,9 @@
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "vite": "^5.3.3"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "postcss.config.js",
+  "author": "",
+  "license": "ISC"
 }

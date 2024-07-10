@@ -43,6 +43,8 @@ public class SecurityConfig {
 
                // Permitir acceso a endpoints de cafes CRUD
                 .requestMatchers(HttpMethod.GET, "/api/coffee/listCoffeesWithTestimonials").permitAll()
+                //.requestMatchers(HttpMethod.POST, "/api/coffee/createCoffee").hasRole("ADMIN")
+
                 .requestMatchers(HttpMethod.POST, "/api/coffee/createCoffee").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/coffee/updateCoffee/{id}").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/coffee/deleteCoffee/{id}").permitAll()
